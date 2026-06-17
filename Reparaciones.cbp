@@ -29,6 +29,9 @@
 			<Add option="-Wall" />
 			<Add option="-std=c++17" />
 		</Compiler>
+		<Linker>
+			<Add option="-lodbc32" />
+		</Linker>
 		<Unit filename="app.cpp" />
 		<Unit filename="app.h" />
 		<Unit filename="backupMenu.cpp" />
@@ -45,6 +48,8 @@
 		<Unit filename="configuracionManager.h" />
 		<Unit filename="configuracionMenu.cpp" />
 		<Unit filename="configuracionMenu.h" />
+		<Unit filename="conexionBD.cpp" />
+		<Unit filename="conexionBD.h" />
 		<Unit filename="detalleReparacion.cpp" />
 		<Unit filename="detalleReparacion.h" />
 		<Unit filename="detalleReparacionArchivo.cpp" />
