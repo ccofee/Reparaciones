@@ -1,23 +1,33 @@
 #pragma once
+#include <string>
 #include "empleadoArchivo.h"
+#include "reparacionArchivo.h"
 
 class EmpleadoManager {
 public:
-   EmpleadoManager();
+    EmpleadoManager();
 
-   void cargarInicialesSiVacio();
+    void cargarInicialesSiVacio();
+    void alta();
+    void baja();
+    void modificacion();
+    void menuConsultas();
 
-   void alta();
-   void baja();
-   void modificacion();
-   void listado();
-   void listadoPorApellido();
+    bool empleadoTieneTareasPendientes(const std::string &legajo);
+    int contarTareasPendientes(const std::string &legajo);
 
 private:
-   Empleado cargarDatos();
-   void cargarCamposEditables(Empleado &e);
-   void mostrar(const Empleado &e);
-   bool legajoUnico(const std::string &legajo);
+    void listado();
+    void listadoPorApellido();
+    void listadoInactivos();
+    void consultaPorLegajo();
+    void informeCargaTrabajo();
+    void historialReparacionesFinalizadas();
 
-   EmpleadoArchivo _repo;
+    Empleado cargarDatos(bool &cancelado);
+    void cargarCamposEditables(Empleado &e);
+    void mostrar(const Empleado &e);
+    std::string seleccionarEmpleado();
+
+    EmpleadoArchivo _repo;
 };

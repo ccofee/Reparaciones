@@ -2,17 +2,19 @@
 #include "reparacion.h"
 using namespace std;
 
-Reparacion::Reparacion() : _nroReparacion(0), _fechaEntrega(), _eliminado(false) {
+Reparacion::Reparacion() : _nroReparacion(0), _fechaEntrega(), _estado(1), _eliminado(false) {
    _cuit[0] = '\0';
    _legajo[0] = '\0';
+   _fechaIngreso.setFechaActual();
 }
 
 Reparacion::Reparacion(int nroReparacion, string cuit, string legajo,
-                       Fecha fechaEntrega)
-   : _fechaEntrega(fechaEntrega), _eliminado(false) {
+                       Fecha fechaIngreso, Fecha fechaEntrega)
+   : _fechaEntrega(fechaEntrega), _estado(1), _eliminado(false) {
    setNroReparacion(nroReparacion);
    setCuit(cuit);
    setLegajo(legajo);
+   setFechaIngreso(fechaIngreso);
 }
 
 int Reparacion::getNroReparacion() const { return _nroReparacion; }
@@ -30,8 +32,18 @@ void Reparacion::setLegajo(string legajo) {
    _legajo[sizeof(_legajo) - 1] = '\0';
 }
 
+Fecha Reparacion::getFechaIngreso() const { return _fechaIngreso; }
+void Reparacion::setFechaIngreso(Fecha fechaIngreso) { _fechaIngreso = fechaIngreso; }
+
 Fecha Reparacion::getFechaEntrega() const { return _fechaEntrega; }
 void Reparacion::setFechaEntrega(Fecha fechaEntrega) { _fechaEntrega = fechaEntrega; }
+
+int Reparacion::getEstado() const { return _estado; }
+void Reparacion::setEstado(int estado) {
+    if (estado >= 1 && estado <= 3) {
+        _estado = estado;
+    }
+}
 
 bool Reparacion::getEliminado() const { return _eliminado; }
 void Reparacion::setEliminado(bool eliminado) { _eliminado = eliminado; }

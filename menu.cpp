@@ -19,7 +19,9 @@ void Menu::run() {
 }
 
 void Menu::pausar() {
-   system("pause");
+   cin.ignore(10000, '\n');
+   cout << endl << "Presione una tecla para continuar...";
+   cin.get();
 }
 
 int Menu::seleccionarOpcion() {

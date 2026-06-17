@@ -4,7 +4,6 @@
 #include "equipoMenu.h"
 #include "empleadoMenu.h"
 #include "reparacionMenu.h"
-#include "consultaMenu.h"
 #include "informeMenu.h"
 #include "configuracionMenu.h"
 
@@ -19,7 +18,6 @@ private:
    EquipoMenu _menuEquipo;
    EmpleadoMenu _menuEmpleado;
    ReparacionMenu _menuReparacion;
-   ConsultaMenu _menuConsulta;
    InformeMenu _menuInforme;
    ConfiguracionMenu _menuConfiguracion;
 };

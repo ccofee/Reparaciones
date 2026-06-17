@@ -1,4 +1,5 @@
 #include <sstream>
+#include <chrono>
 #include "fecha.h"
 
 Fecha::Fecha() : _dia(1), _mes(1), _anio(2000) {}
@@ -34,4 +35,18 @@ std::string Fecha::toString() const {
    std::ostringstream os;
    os << _dia << "/" << _mes << "/" << _anio;
    return os.str();
+}
+
+
+///sacado del proyecto de Brian
+void Fecha::setFechaActual() {
+    // Obtener la fecha actual del sistema
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    std::tm* localTime = std::localtime(&now_c);
+
+    // Asignar los valores a la fecha
+    _dia = localTime->tm_mday;
+    _mes = localTime->tm_mon + 1; // tm_mon va de 0 a 11
+    _anio = localTime->tm_year + 1900; // tm_year es el numero de anios desde 1900
 }
