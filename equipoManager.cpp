@@ -55,8 +55,8 @@ bool EquipoManager::cargarCamposEditables(Equipo &e)
 
     e.setCuit(cuit);
 
-    e.setDescripcion(cargarTexto("Descripcion del Equipo: ", 49));
     e.setMarca(cargarTexto("Marca y modelo: ", 29));
+    e.setDescripcion(cargarTexto("Descripcion del Equipo: ", 49));
 
     int tipo;
     do
@@ -85,7 +85,7 @@ bool EquipoManager::cargarCamposEditables(Equipo &e)
         //validacion fecha futura
         else if (fe.aNumero() > fechaActual.aNumero())
         {
-            cout << " > ERROR LOGICO: La fecha de ingreso no puede ser en el futuro." << endl;
+            cout << " > ERROR: La fecha de ingreso no puede ser en el futuro." << endl;
             cout << "   La fecha del sistema de hoy es: " << fechaActual.toString() << endl;
         }
         else
@@ -366,6 +366,7 @@ void EquipoManager::listadoPorFechaIngreso()
         return;
     }
     _repo.leerTodos(v, cantidad);
+
 
     for (int i = 0; i < cantidad - 1; i++)
     {

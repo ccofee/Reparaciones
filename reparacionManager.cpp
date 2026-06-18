@@ -114,6 +114,7 @@ void ReparacionManager::mostrar(const Reparacion &r)
 {
     cout << "Reparacion #" << r.getNroReparacion() << endl<<endl;
 
+
     int posC = _repoCliente.buscarPorCuit(r.getCuit());
     if (posC != -1)
     {
@@ -124,6 +125,7 @@ void ReparacionManager::mostrar(const Reparacion &r)
     {
         cout << "Cliente: " << r.getCuit() << " (no encontrado)" << endl;
     }
+
 
     int posE = _repoEmpleado.buscarPorLegajo(r.getLegajo());
     if (posE != -1)
@@ -265,7 +267,7 @@ int ReparacionManager::cargarDetalles(int nroReparacion, const string &cuit)
             continue;
         }
 
-
+        //validacion equipo cargado repetido
         if (detalleYaCargado(nroReparacion, nroEquipo))
         {
             cout << " > ERROR: Este equipo ya fue asignado a esta misma orden de trabajo." << endl;
@@ -289,7 +291,7 @@ void ReparacionManager::alta()
 {
     cout << "\n=== ALTA DE REPARACION ===" << endl;
 
-
+    //empleados
     if (_repoEmpleado.getCantidadRegistros() == 0)
     {
         cout << " > ERROR CRITICO: No hay empleados registrados en el sistema." << endl;
@@ -374,8 +376,8 @@ void ReparacionManager::alta()
         return;
     }
 
-    //fechs
 
+    //fechs
     if (cargados > 0)
     {
         Fecha fe;
@@ -558,18 +560,23 @@ void ReparacionManager::modificarDetalles(const Reparacion &r)
         if (opcion == 1)
         {
             mostrarEquiposDeCliente(r.getCuit());
+
             int nroEquipo = cargarEntero("\nNumero de equipo a agregar (0 para cancelar): ");
             if (nroEquipo == 0) continue;
+
+            //verifica si existe
             if (_repoEquipo.buscarPorNumero(nroEquipo) == -1)
             {
                 cout << "El equipo no existe o esta eliminado." << endl;
                 continue;
             }
+            //verifica cliente
             if (!equipoPerteneceACliente(nroEquipo, r.getCuit()))
             {
                 cout << "El equipo no pertenece al cliente de la reparacion." << endl;
                 continue;
             }
+            //verifica repeticion
             if (detalleYaCargado(r.getNroReparacion(), nroEquipo))
             {
                 cout << "Ese equipo ya esta en el detalle." << endl;
@@ -592,28 +599,35 @@ void ReparacionManager::modificarDetalles(const Reparacion &r)
                 continue;
             }
             DetalleReparacion d = _repoDetalle.leer(posDetalle);
+
             cout << "Importe actual: $" << d.getImporte() << endl;
+
             d.setImporte(pedirImporte());
             _repoDetalle.actualizar(posDetalle, d);
+
             cout << "Importe modificado." << endl;
         }
         else if (opcion == 3)
         {
             int nroEquipo = cargarEntero("Numero de equipo a quitar del detalle: ");
             int posDetalle = _repoDetalle.buscarDetalle(r.getNroReparacion(), nroEquipo);
+
             if (posDetalle == -1)
             {
                 cout << "Ese equipo no esta en el detalle." << endl;
                 continue;
             }
+
             if (contarEquiposDeReparacion(r.getNroReparacion()) <= 1)
             {
                 cout << "No se puede quitar: la reparacion debe tener al menos un equipo." << endl;
                 continue;
             }
+
             DetalleReparacion d = _repoDetalle.leer(posDetalle);
             d.setEliminado(true);
             _repoDetalle.actualizar(posDetalle, d);
+
             cout << "Equipo quitado del detalle." << endl;
         }
         else if (opcion == 4)
@@ -752,6 +766,8 @@ void ReparacionManager::modificacion()
         case 3:
         {
             Fecha nuevaFecha;
+            Fecha hoy;
+            hoy.setFechaActual();
             bool fechaValida = false;
 
             do
@@ -775,13 +791,33 @@ void ReparacionManager::modificacion()
             }
             while (!fechaValida);
 
+            if (nuevaFecha.aNumero() > hoy.aNumero())
+            {
+                //fecha reprogramada
+                r.setEstado(2);
+                cout << " >> Fecha reprogramada. La orden se mantiene [EN PROCESO]." << endl;
+            }else
+            {
+                //fecha de boy o anterior
+                cout << "\n> AVISO: La fecha ingresada coincide con el dia de hoy o es anterior." << endl<< endl;
 
-            r.setFechaEntrega(nuevaFecha);
-            r.setEstado(3);
+                int terminarYa = cargarEntero(" El trabajo ya fue FINALIZADO y entregado con exito? (1=Si [TERMINADA], 0=No [EN PROCESO]): ");
+
+                if (terminarYa == 1)
+                {
+                    r.setEstado(3);
+                    cout << " >> La orden se actualizo a estado [TERMINADA]." << endl;
+                }
+                else
+                {
+                    r.setEstado(2);
+                    cout << " >> La orden permanecera [EN PROCESO] mientras se termina el trabajo." << endl;
+                }
+            }
 
             if (_repo.actualizar(pos, r))
             {
-                cout << " >> Fecha de entrega modificada y estado actualizado a TERMINADA!." << endl;
+                cout << " >> Cambios guardados exitosamente en el archivo." << endl;
             }
             else
             {
@@ -1094,6 +1130,7 @@ void ReparacionManager::listadoPorFechaEntrega()
         cout << " > ERROR CRITICO: No se pudo obtener memoria para ordenar el listado." << endl;
         return;
     }
+
     _repo.leerTodos(v, cantidad);
 
     for (int i = 0; i < cantidad - 1; i++)
@@ -1260,6 +1297,7 @@ void ReparacionManager::consultaPorRangoFechas()
 {
     cout << "=== CONSULTA POR RANGO DE FECHAS (INGRESO) ===" << endl << endl;
     cout << "Ingrese la fecha de INICIO del periodo:" << endl;
+
     Fecha fechaInicio = cargarFecha("");
 
     if (!fechaInicio.esValida())
@@ -1269,6 +1307,7 @@ void ReparacionManager::consultaPorRangoFechas()
     }
 
     cout << "\nIngrese la fecha de FIN del periodo:" << endl;
+
     Fecha fechaFin = cargarFecha("");
 
     if (!fechaFin.esValida() || fechaFin.aNumero() < fechaInicio.aNumero())
