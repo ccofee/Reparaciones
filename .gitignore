@@ -5,3 +5,7 @@ obj/
 # Code::Blocks per-user files
 *.layout
 *.depend
+
+# Scripts de instalacion/entorno (no van al repositorio)
+db/instalar.bat
+db/habilitar_tcp_sqlserver.ps1
